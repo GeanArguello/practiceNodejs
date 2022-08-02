@@ -1,7 +1,7 @@
-require('dotenv').config()
-import { enviroment } from './config/varEntorno'
-import app from './server/index'
-import { db } from './config/db'
+require('dotenv').config();
+import { enviroment } from './config/varEntorno';
+import app from './server/index';
+import { db } from './config/db';
 
 
 (async ()=>{
