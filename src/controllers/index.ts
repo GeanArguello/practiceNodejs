@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
 import { Users } from "../schemas";
+import validateMail from "../utils/validateMail";
 
 
 export const createUser = async (req: Request, res: Response): Promise<any> => {
@@ -12,14 +13,8 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
                 message: 'Por favor completa los datos'
             });
         }
-
-        var validRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-
-        if(!validRegex.test(email)){
-            return res.status(400).json({
-                message: 'Email incorrecto'
-            });
-        };
+        //Valido que sea un mail
+        validateMail(email, res)
 
         const emailExist = await Users.findOne({
             where:{
@@ -50,6 +45,46 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
     }
 }
 
+export const updateUser = async (req: Request, res: Response): Promise<any> =>{
+
+    const { id } = req.params;
+    const { username, email, age, country } = req.body;
+
+    try {
+        validateMail(email, res);
+
+        const userActualizado = {
+            userName: username,
+            email: email,
+            age: age,
+            country: country     
+        }
+
+        const updateUserResult:any= await Users.update(
+            userActualizado,
+            {where:{id: id}}
+        );
+
+        if(updateUserResult == 0){
+            return res.status(404).json({
+                message: 'No se encontro el usuario Id: ' + id
+            })
+        
+        }
+        res.status(200).json({
+            message: 'Usuario Actualizado',
+            data: userActualizado,
+        })
+
+    } catch (error:any) {
+        /* console.log(error) */
+        res.status(500).json({
+            message: 'Ocurrio un error al querer traer un usuario',
+            error: error,
+        });
+    }
+}
+
 export const getAllUsers = async (req: Request, res: Response): Promise<any> =>{
     try {
         const users = await Users.findAll();
@@ -64,5 +99,94 @@ export const getAllUsers = async (req: Request, res: Response): Promise<any> =>{
             message: 'Ocurrio un error al querer traer todos los usuarios',
             error: error,
         })
+    }
+}
+
+export const getUser = async (req: Request, res: Response): Promise<any> =>{
+    try {
+        const { id } = req.params;    
+        
+        const getUserResult:any = await Users.findOne({
+            where:{
+                id: id,
+            }
+        });
+
+        if(getUserResult === null){
+            return res.status(404).json({
+                message: "Usuario no encontrado"
+            });
+        }
+
+        res.status(200).json({
+            data: getUserResult,
+        });
+
+    } catch (error:any) {
+        /* console.log(error) */
+        res.status(500).json({
+            message: 'Ocurrio un error al querer traer un usuario',
+            error: error,
+        });
+    }
+}
+
+export const deleteAllUsers = async (req: Request, res: Response): Promise<any> =>{
+    try {
+        
+        const allResult:any = await Users.findAll();
+
+        let isDelete:any;
+
+        for(const user of allResult) {
+            isDelete = await Users.destroy({
+                where:{
+                    Id: user.dataValues.Id
+                }
+            })
+        }
+        if(!isDelete){
+            res.status(404).json({
+                message: 'No existen usuarios en la Base de Datos'
+            })
+        }
+        res.status(200).json({
+            message: 'Usuarios Eliminados',
+            data: allResult,
+        })
+    } catch (error:any) {
+        /* console.log(error) */
+        res.status(500).json({
+            message: 'Ocurrio un error al querer eliminar todos los usuarios',
+            error: error,
+        });
+    }
+}
+
+export const deleteUser = async (req: Request, res: Response): Promise<any> =>{
+
+    const { email } = req.body;
+    try {
+        
+        const deleteUserResult = await Users.destroy(
+            {where:{ email }},
+        )
+        
+        if(deleteUserResult == 0){
+            res.status(404).json({
+                message: "No se encontro usuario"
+            })
+        };
+
+        res.status(200).json({
+            message: 'El usuario ha sido eliminado',
+            data: email
+        })
+    } catch (error:any) {
+        /* console.log(error) */
+        res.status(500).json({
+            message: 'Ocurrio un error al querer eliminar todos los usuarios',
+            error: error,
+        });
     }
 }
