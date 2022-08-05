@@ -36,10 +36,43 @@ export const Users = db.define('users',{
 },
 );
 
-/* (async()=>{
+export const UserJWT = db.define(
+    'userJWT',
+    {
+        Id: {
+            type: DataTypes.INTEGER,
+            autoIncrement: true,
+            primaryKey: true
+            // allowNull defaults to true
+        },
+        userName: {
+            type: DataTypes.STRING
+            // allowNull defaults to true
+        },
+        email: {
+            type: DataTypes.STRING
+            // allowNull defaults to true
+        },
+        password: {
+            type: DataTypes.STRING
+        }
+    },
+    {
+        //tableName: 'IDP_Sessions',
+        timestamps: true,
+        // If don't want createdAt
+        createdAt: true,
+        // If don't want updatedAt
+        updatedAt: true,
+    },
+);
+
+
+
+(async()=>{
     try{
-        await db.sync()
+        await UserJWT.sync()
     }catch(e){
         console.log(e)
     }
-})(); */
+})();

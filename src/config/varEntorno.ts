@@ -4,5 +4,6 @@ export const enviroment = {
     DBNAME: process.env.dbname,
     DBUSER: process.env.dbuser,
     DBPASSWORD: process.env.dbpassword,
-    DBURL:process.env.dburl
+    DBURL:process.env.dburl,
+    SECRET_TOKEN_JWR: process.env.secret
 }
