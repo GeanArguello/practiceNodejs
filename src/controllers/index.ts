@@ -14,7 +14,13 @@ export const createUser = async (req: Request, res: Response): Promise<any> => {
             });
         }
         //Valido que sea un mail
-        validateMail(email, res)
+
+        if(!validateMail(email, res)){
+            return res.status(400).json({
+                message: 'Email incorrecto'
+            })
+        }
+       
 
         const emailExist = await Users.findOne({
             where:{
@@ -51,7 +57,11 @@ export const updateUser = async (req: Request, res: Response): Promise<any> =>{
     const { username, email, age, country } = req.body;
 
     try {
-        validateMail(email, res);
+        if(!validateMail(email, res)){
+            return res.status(400).json({
+                message: 'Email incorrecto'
+            })
+        }
 
         const userActualizado = {
             userName: username,
@@ -69,7 +79,6 @@ export const updateUser = async (req: Request, res: Response): Promise<any> =>{
             return res.status(404).json({
                 message: 'No se encontro el usuario Id: ' + id
             })
-        
         }
         res.status(200).json({
             message: 'Usuario Actualizado',
@@ -89,6 +98,12 @@ export const getAllUsers = async (req: Request, res: Response): Promise<any> =>{
     try {
         const users = await Users.findAll();
 
+        
+        if(!users[0]){
+            return res.status(404).json({
+                message: 'No existen usuarios en la db'
+            })
+        };
         res.status(200).json({
             message: "All Users",
             data: users,

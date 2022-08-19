@@ -7,7 +7,7 @@ const PORT = 8080;
 //Middlewares
 
 app.use(express.json());
-app.get('/', (req, res)=>{ res.send('Servicio Arriba')});
+app.get('/', (req: Request, res: Response)=>{ res.send('Servicio Arriba')});
 app.use('', router);
 
 

@@ -4,6 +4,8 @@ import app from './server/index';
 import { db } from './config/db';
 
 
+
+//Testear que me levante la db
 (async ()=>{
    try{
     await db.authenticate();

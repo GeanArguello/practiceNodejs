@@ -69,10 +69,13 @@ export const UserJWT = db.define(
 
 
 
-(async()=>{
+
+
+//Sincronizar tabla con db
+/* (async()=>{
     try{
         await UserJWT.sync()
     }catch(e){
         console.log(e)
     }
-})();
+})(); */
